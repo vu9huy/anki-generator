@@ -1,7 +1,11 @@
 // File: utils/tts.js
-const fs = require('fs');
-const googleTTS = require('google-tts-api');
-const axios = require('axios');
+// const fs = require('fs');
+// const googleTTS = require('google-tts-api');
+// const axios = require('axios');
+
+import fs from 'fs';
+import googleTTS from 'google-tts-api';
+import axios from 'axios';
 
 async function getAudioBuffer(text, filename) {
   const url = googleTTS.getAudioUrl(text, {
@@ -13,4 +17,4 @@ async function getAudioBuffer(text, filename) {
   fs.writeFileSync(filename, res.data);
 }
 
-module.exports = { getAudioBuffer };
+export { getAudioBuffer }

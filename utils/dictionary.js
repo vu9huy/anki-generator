@@ -1,4 +1,5 @@
-const axios = require('axios');
+// const axios = require('axios');
+import axios from 'axios';
 
 async function getWordData(word) {
   try {
@@ -31,5 +32,4 @@ async function getWordData(word) {
     return null;
   }
 }
-
-module.exports = { getWordData };
+export { getWordData };

@@ -1,12 +1,30 @@
-// File: server.js
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const axios = require('axios');
-const { getAudioBuffer } = require('./utils/tts');
-const { getWordData } = require('./utils/dictionary');
-const { spawn } = require('child_process');
+// // File: server.js
+// const express = require('express');
+// const fs = require('fs');
+// const path = require('path');
+// const axios = require('axios');
+// const { getAudioBuffer } = require('./utils/tts');
+// const { getWordData } = require('./utils/dictionary');
+// const { spawn } = require('child_process');
+// const { genAnki } = require('./utils/gen_anki');
+
+
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import axios from 'axios';
+import { spawn } from 'child_process';
+import { getAudioBuffer } from './utils/tts.js';
+import { getWordData } from './utils/dictionary.js';
+import { genAnki } from './utils/gen_anki.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -51,28 +69,29 @@ app.post('/generate', async (req, res) => {
 
   fs.writeFileSync('data/data.json', JSON.stringify(output, null, 2));
 
-  const python = spawn('python3', ['generate_apkg.py']);
+  // const python = spawn('python3', ['generate_apkg.py']);
 
-  python.on('close', (code) => {
-    if (code === 0) {
-      let html = output.map(card => `
-        <div class="card">
-          <h3>${card.word} <span class="pos">(${card.partOfSpeech})</span></h3>
-          <p class="pronunciation">${card.pronunciation}</p>
-          <audio controls src="/audio/${card.audio.word}"></audio>
-          <p><strong>Definition:</strong> ${card.definition}</p>
-          <audio controls src="/audio/${card.audio.definition}"></audio>
-          <p><strong>Example:</strong> ${card.example}</p>
-          <audio controls src="/audio/${card.audio.example}"></audio>
-        </div>
-      `).join('');
+  // python.on('close', (code) => {
+  //   if (code === 0) {
+  //     let html = output.map(card => `
+  //       <div class="card">
+  //         <h3>${card.word} <span class="pos">(${card.partOfSpeech})</span></h3>
+  //         <p class="pronunciation">${card.pronunciation}</p>
+  //         <audio controls src="/audio/${card.audio.word}"></audio>
+  //         <p><strong>Definition:</strong> ${card.definition}</p>
+  //         <audio controls src="/audio/${card.audio.definition}"></audio>
+  //         <p><strong>Example:</strong> ${card.example}</p>
+  //         <audio controls src="/audio/${card.audio.example}"></audio>
+  //       </div>
+  //     `).join('');
 
-      html += `<a class="download-btn" href="/output.apkg" download>Download .apkg</a>`;
-      res.send(html);
-    } else {
-      res.status(500).send('<p style="color: red">Failed to generate .apkg file.</p>');
-    }
-  });
+  //     html += `<a class="download-btn" href="/output.apkg" download>Download .apkg</a>`;
+  //     res.send(html);
+  //   } else {
+  //     res.status(500).send('<p style="color: red">Failed to generate .apkg file.</p>');
+  //   }
+  // });
+  await genAnki()
 });
 
 app.listen(3000, () => console.log('Server started on http://localhost:3000'));
