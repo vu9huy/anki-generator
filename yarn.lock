@@ -396,10 +396,10 @@ function-bind@^1.1.2:
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.2.tgz#2c02d864d97f3ea6c8830c464cbd11ab6eab7a1c"
   integrity sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==
 
-genankjs@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/genankjs/-/genankjs-1.0.2.tgz#b883e01d6d0620e5ea4a04b165bff3b861ec65cc"
-  integrity sha512-pgKXKEoIjh+NJ7ZCQIyfhdh3BFQ4p8zTDEAvb8PmFXNpVWleHdm2/OA2ZZZ2fucloDp3w6nz1e4tF7FkJEH7lA==
+genankjs@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/genankjs/-/genankjs-1.0.6.tgz#d20d3b727fe108072b9666356881e8aebe231e34"
+  integrity sha512-lXJEW7up07wdD7stvwEiAOgREG3d2lhhjxC57uM/pMizx+uM4Vh7nNM9sQCw/kkL6U6HkJb8RewAPUbx9fhr6Q==
   dependencies:
     better-sqlite3 "^12.2.0"
     jszip "^3.10.1"
