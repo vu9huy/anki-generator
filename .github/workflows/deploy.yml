@@ -1,0 +1,77 @@
+name: Deploy anki-generate
+
+on:
+  push:
+    branchs: ["main"]
+
+jobs:
+
+  # -------------------------
+  # Build & Push Images
+  # -------------------------
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-actionv2
+        with: 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker Image
+        uses: docker/build-push-actions@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/anki-generate:latest
+          # cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/anki-generate:latest:buildcache
+          # cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/anki-generate:latest:buildcache,mode=max
+
+  # -------------------------
+  # Deploy to Server
+  # -------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+    neeeds: [build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy files to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_KEY }}
+            source: "docker-compose.yml"
+            target: "/home/${{ secrets.SSH_USER }}/anki-generate/"
+            strip_components: 0
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/${{ secrets.SSH_USER }}/anki-generate
+
+            # Stop any old containers and remove orphans
+            docker compose down --remove-orphans
+
+            # Pull latest images & start all containers
+            docker compose pull
+            docker compose up -d
+
+            # Clean up unused images
+            docker image prune -f

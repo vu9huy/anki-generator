@@ -1,7 +1,7 @@
 services:
   app:
-    # image: gaaravu0/anki-generate
-    build: .
+    image: gaaravu0/anki-generate
+    # build: .
     container_name: anki-generate
     restart: always
     ports:
