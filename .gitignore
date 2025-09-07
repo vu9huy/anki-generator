@@ -62,4 +62,5 @@ pids/
 # pnpm-lock.yaml
 
 
-public/audio/*
+src/public/audio/*
+src/public/output/*
