@@ -47,4 +47,4 @@ for card in data:
 
 package = genanki.Package(deck)
 package.media_files = media_files
-package.write_to_file('public/output.apkg')
+package.write_to_file('public/output/output.apkg')

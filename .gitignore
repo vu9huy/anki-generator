@@ -60,3 +60,6 @@ pids/
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+
+public/audio/*

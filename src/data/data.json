@@ -1,0 +1,17 @@
+{
+  "deckName": "dfsdsds",
+  "cards": [
+    {
+      "word": "test",
+      "pronunciation": "/test/",
+      "definition": "A challenge, trial.",
+      "example": "Climbing the mountain tested our stamina.",
+      "partOfSpeech": "noun",
+      "audio": {
+        "word": "test_word.mp3",
+        "definition": "test_def.mp3",
+        "example": "test_ex.mp3"
+      }
+    }
+  ]
+}

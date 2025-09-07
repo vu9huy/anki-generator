@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anki Card Generator</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./htmx-2.0.6.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Anki Card Generator</h1>
+    <form 
+        id="anki-form"
+        hx-post="/generate" 
+        hx-trigger="submit" 
+        hx-target="#results" 
+        hx-swap="innerHTML"  
+        hx-indicator="#loading"
+        hx-disabled-elt="find button[type='submit'], find textarea, find input[name='deckName'], find input[name='wordFile']"
+        hx-encoding="multipart/form-data"
+      >
+      <div class="input-group">
+        <label for="deckName">Deck Name:</label>
+        <input 
+          type="text" 
+          id="deckName"
+          name="deckName" 
+          placeholder="Enter deck name (e.g., My Vocabulary)" 
+          required
+          oninput="validateForm()"
+        />
+      </div>
+
+      <!-- File Upload Section -->
+      <div class="file-upload-section">
+        <div class="upload-tabs">
+          <button type="button" class="tab-btn active" onclick="switchTab('manual')">Manual Input</button>
+          <button type="button" class="tab-btn" onclick="switchTab('file')">Upload File</button>
+        </div>
+        
+        <!-- Manual input tab -->
+        <div id="manual-tab" class="tab-content active">
+          <div class="textarea-wrapper">
+            <label for="words">Words (one per line):</label>
+            <textarea 
+              id="words"
+              name="words" 
+              rows="10"
+              cols="40" 
+              placeholder="Enter one word per line..." 
+              style="resize: vertical;"
+              oninput="validateForm()"
+            ></textarea>
+            <button 
+              type="button" 
+              class="clear-button"
+              id="clear-btn"
+              disabled
+              onclick="clearForm()"
+            >Reset</button>
+          </div>
+        </div>
+
+        <!-- File upload tab -->
+        <div id="file-tab" class="tab-content">
+          <div class="file-input-wrapper">
+            <label for="wordFile">Upload Word File:</label>
+            <div class="file-input-container">
+              <input 
+                type="file" 
+                id="wordFile"
+                name="wordFile" 
+                accept=".txt,.csv"
+                onchange="handleFileSelect(this)"
+              />
+              <!-- Updated: File button and help text on same row -->
+              <div class="file-button-row">
+                <div class="custom-file-button">
+                  Choose File
+                </div>
+                <div class="file-input-help">
+                  or drag and drop your file here
+                </div>
+              </div>
+              <div class="file-info">
+                <div class="file-types">
+                  <span class="file-type">.txt</span>
+                  <span class="file-type">.csv</span>
+                </div>
+                <div class="file-help">
+                  <p><strong>📄 .txt files:</strong> One word per line</p>
+                  <p><strong>📊 .csv files:</strong> Words in any column/row</p>
+                  <p><strong>📏 Max size:</strong> 5MB</p>
+                </div>
+              </div>
+            </div>
+            <div id="file-preview" class="file-preview"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="button-group">
+        <button 
+          type="submit"
+          id="generate-btn"
+          disabled
+        >Generate Cards</button>
+        
+        <button 
+          type="button"
+          id="reset-btn"
+          onclick="resetForm()"
+          style="display: none;"
+        >Enter New Words</button>
+      </div>
+    </form>
+    
+    <div id="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>Processing words and generating cards...</p>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    let currentTab = 'manual';
+
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      // Update tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+      
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(`${tab}-tab`).classList.add('active');
+      
+      // Clear the other tab's input
+      if (tab === 'manual') {
+        document.getElementById('wordFile').value = '';
+        document.getElementById('file-preview').innerHTML = '';
+      } else {
+        document.getElementById('words').value = '';
+      }
+      
+      validateForm();
+    }
+
+    function validateForm() {
+      const deckName = document.getElementById('deckName').value.trim();
+      const words = document.getElementById('words').value.trim();
+      const file = document.getElementById('wordFile').files[0];
+      
+      let isValid = false;
+      
+      if (deckName !== '') {
+        if (currentTab === 'manual' && words !== '') {
+          isValid = true;
+        } else if (currentTab === 'file' && file) {
+          isValid = true;
+        }
+      }
+      
+      document.getElementById('generate-btn').disabled = !isValid;
+      
+      // Update clear button for manual tab
+      if (currentTab === 'manual') {
+        document.getElementById('clear-btn').disabled = deckName === '' && words === '';
+      }
+    }
+
+    function handleFileSelect(input) {
+      const file = input.files[0];
+      processSelectedFile(file);
+    }
+
+    function processSelectedFile(file) {
+      const preview = document.getElementById('file-preview');
+      
+      if (file) {
+        // Validate file type
+        const allowedTypes = ['.txt', '.csv'];
+        const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+        
+        if (!allowedTypes.includes(fileExt)) {
+          showFileError('Only .txt and .csv files are allowed');
+          return;
+        }
+        
+        // Validate file size (5MB limit)
+        if (file.size > 5 * 1024 * 1024) {
+          showFileError('File size must be less than 5MB');
+          return;
+        }
+        
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        const fileType = file.name.split('.').pop().toLowerCase();
+        
+        preview.innerHTML = `
+          <div class="file-selected">
+            <div class="file-icon">${fileType === 'csv' ? '📊' : '📄'}</div>
+            <div class="file-details">
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${fileSize} MB</div>
+            </div>
+            <button type="button" class="remove-file" onclick="removeFile()">✕</button>
+          </div>
+        `;
+        
+        // Clear manual input when file is selected
+        document.getElementById('words').value = '';
+        
+        // Update the file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        document.getElementById('wordFile').files = dataTransfer.files;
+      } else {
+        preview.innerHTML = '';
+      }
+      
+      validateForm();
+    }
+
+    function showFileError(message) {
+      const preview = document.getElementById('file-preview');
+      preview.innerHTML = `
+        <div class="file-error">
+          <div class="error-icon">⚠️</div>
+          <div class="error-message">${message}</div>
+        </div>
+      `;
+      setTimeout(() => {
+        preview.innerHTML = '';
+      }, 3000);
+    }
+
+    function removeFile() {
+      document.getElementById('wordFile').value = '';
+      document.getElementById('file-preview').innerHTML = '';
+      validateForm();
+    }
+
+    function clearForm() {
+      document.getElementById('deckName').value = '';
+      document.getElementById('words').value = '';
+      document.getElementById('wordFile').value = '';
+      document.getElementById('file-preview').innerHTML = '';
+      validateForm();
+    }
+
+    function resetForm() {
+      clearForm();
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('reset-btn').style.display = 'none';
+      document.getElementById('generate-btn').style.display = 'inline-block';
+      document.getElementById('anki-form').style.display = 'block';
+      
+      // Reset to manual tab
+      switchTab('manual');
+    }
+
+    // Drag and Drop functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropZone = document.getElementById('file-drop-zone');
+      
+      if (dropZone) {
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, preventDefaults, false);
+          document.body.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+      }
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      function highlight(e) {
+        dropZone.classList.add('drag-over');
+      }
+      
+      function unhighlight(e) {
+        dropZone.classList.remove('drag-over');
+      }
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+          const file = files[0];
+          processSelectedFile(file);
+        }
+      }
+    });
+
+    // Listen for successful generation
+    document.addEventListener('htmx:afterSwap', function(event) {
+      if (event.target.id === 'results') {
+        // Form remains visible after success
+      }
+    });
+
+    // Handle file upload errors
+    document.addEventListener('htmx:responseError', function(event) {
+      const errorMessage = event.detail.xhr.responseText || 'An error occurred during upload.';
+      document.getElementById('results').innerHTML = errorMessage;
+    });
+  </script>
+</body>
+</html>

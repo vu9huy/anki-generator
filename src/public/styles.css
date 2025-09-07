@@ -1,0 +1,546 @@
+/* Enhanced styles for Anki Card Generator with File Upload */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  position: relative;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+.input-group {
+  margin-bottom: 25px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #c1c1c1;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* File Upload Section */
+.file-upload-section {
+  margin-bottom: 25px;
+}
+
+.upload-tabs {
+  display: flex;
+  border-bottom: 2px solid #e1e5e9;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+  background-color: rgba(67, 117, 242, 0.8);
+  color: white;
+}
+
+.tab-btn.active {
+  color: white;
+  border-bottom-color: rgb(74, 122, 245);
+  background-color: rgb(74, 122, 245);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Manual Input Styles */
+.textarea-wrapper {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.textarea-wrapper label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95em;
+}
+
+textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #c1c1c1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 16px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+  min-height: 150px;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.clear-button {
+  position: absolute;
+  top: 35px;
+  right: 10px;
+  background: rgb(224, 51, 51);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.clear-button:hover:not(:disabled) {
+  background: rgba(224, 51, 51, 0.8);
+  transform: translateY(-1px);
+}
+
+.clear-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* File Input Styles */
+.file-input-wrapper label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.file-input-container {
+  border: 2px dashed #e1e5e9;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.file-input-container:hover {
+  border-color: #667eea;
+  background-color: #f8f9fa;
+}
+
+.file-input-container input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+}
+
+/* Updated: Custom file button and help text on same row */
+.file-button-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.custom-file-button {
+  background: rgb(53, 106, 239);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 8px rgba(53, 106, 239, 0.2);
+  flex-shrink: 0;
+}
+
+.custom-file-button:hover {
+  background: rgba(53, 106, 239, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(53, 106, 239, 0.3);
+}
+
+.custom-file-button:active {
+  transform: translateY(0);
+}
+
+.custom-file-button::before {
+  content: "📁 ";
+  margin-right: 8px;
+}
+
+.file-input-help {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.file-info {
+  margin-top: 15px;
+}
+
+.file-types {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.file-type {
+  background: rgb(53, 106, 239);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.file-help {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.file-help p {
+  margin: 2px 0;
+}
+
+.file-preview {
+  margin-top: 15px;
+}
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.file-icon {
+  font-size: 24px;
+}
+
+.file-details {
+  flex: 1;
+}
+
+.file-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.file-size {
+  font-size: 12px;
+  color: #666;
+}
+
+.remove-file {
+  background: rgb(53, 106, 239);
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-file:hover {
+  background: rgba(53, 106, 239, 0.8);
+}
+
+.file-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  color: #e53e3e;
+}
+
+.error-icon {
+  font-size: 20px;
+}
+
+.error-message {
+  font-weight: 500;
+}
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+button[type="submit"], 
+#reset-btn {
+  background: rgb(53, 106, 239);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+button[type="submit"]:hover:not(:disabled),
+#reset-btn:hover {
+  background: rgba(53, 106, 239, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(53, 106, 239, 0.3);
+}
+
+button[type="submit"]:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Loading Styles */
+.loading {
+  text-align: center;
+  color: #667eea;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 20px 0;
+  display: none;
+}
+
+.loading.htmx-indicator {
+  display: block;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e1e5e9;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success Message Styles */
+.success-message {
+  background: #ffffff;
+  border: 1px solid #51cf66;
+  color: #000;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.success-message h2 {
+  margin-bottom: 15px;
+  font-size: 1.8em;
+}
+
+.success-message p {
+  margin: 8px 0;
+  font-size: 1.1em;
+}
+
+.download-section {
+  text-align: center;
+  margin: 25px 0;
+}
+
+.download-btn {
+  display: inline-block;
+  background: rgb(44 185 84);
+  color: white;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background: rgba(44 185 84, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(53, 106, 239, 0.3);
+}
+
+/* Card Preview Styles */
+.card-preview {
+  margin-top: 25px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.card-preview h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.card h4 {
+  color: #667eea;
+  margin-bottom: 10px;
+  font-size: 1.4em;
+}
+
+.card .pos {
+  color: #666;
+  font-size: 0.8em;
+  font-weight: normal;
+}
+
+.card .pronunciation {
+  color: #888;
+  font-style: italic;
+  margin-bottom: 10px;
+  font-size: 0.95em;
+}
+
+.card p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.card strong {
+  color: #333;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  h1 {
+    font-size: 2em;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  button[type="submit"] {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .upload-tabs {
+    flex-direction: column;
+  }
+  
+  .tab-btn {
+    border-bottom: 1px solid #e1e5e9;
+    border-right: none;
+  }
+  
+  .tab-btn.active {
+    border-bottom-color: rgb(53, 106, 239);
+    border-left: 3px solid rgb(53, 106, 239);
+  }
+  
+  /* Mobile responsive for file button row */
+  .file-button-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
