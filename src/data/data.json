@@ -1,16 +1,28 @@
 {
-  "deckName": "dfsdsds",
+  "deckName": "ffggfgf",
   "cards": [
     {
-      "word": "test",
-      "pronunciation": "/test/",
-      "definition": "A challenge, trial.",
-      "example": "Climbing the mountain tested our stamina.",
+      "word": "text",
+      "pronunciation": "/tɛkst/",
+      "definition": "A writing consisting of multiple glyphs, characters, symbols or sentences.",
+      "example": "German text",
       "partOfSpeech": "noun",
       "audio": {
-        "word": "test_word.mp3",
-        "definition": "test_def.mp3",
-        "example": "test_ex.mp3"
+        "word": "text_word.mp3",
+        "definition": "text_def.mp3",
+        "example": "text_ex.mp3"
+      }
+    },
+    {
+      "word": "tree",
+      "pronunciation": "/tɹiː/",
+      "definition": "Fast growing function based on Kruskal's tree theorem.",
+      "example": "Birds have a nest in a tree in the garden.",
+      "partOfSpeech": "noun",
+      "audio": {
+        "word": "tree_word.mp3",
+        "definition": "tree_def.mp3",
+        "example": "tree_ex.mp3"
       }
     }
   ]

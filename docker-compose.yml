@@ -1,0 +1,11 @@
+services:
+  app:
+    # image: gaaravu0/anki-generate
+    build: .
+    container_name: anki-generate
+    restart: always
+    ports:
+      - "1998:1998"
+    environment:
+      - NODE_ENV=production
+      - PORT=1998

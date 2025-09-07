@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import multer from 'multer';
 import Papa from 'papaparse';
+import "dotenv/config.js";
 
 const app = express();
 
@@ -38,10 +39,11 @@ const upload = multer({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('public'));
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
 // Function to extract words from file content
@@ -213,7 +215,7 @@ app.post('/generate', upload.single('wordFile'), async (req, res) => {
     html += `
       <div class="download-section">
         <a class="download-btn" href="/output/output.apkg" download="${deckName.replace(/[^a-zA-Z0-9]/g, '_')}.apkg">
-          📥 Download Anki Deck
+          Download Anki Deck
         </a>
       </div>
     </div>`;
@@ -248,6 +250,8 @@ app.get('/output/output.apkg', (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Server started on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log('Server started on http://localhost:' + PORT);
 });

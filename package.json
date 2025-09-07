@@ -1,29 +1,45 @@
 {
   "name": "anki-card-generator",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "build/server.js",
   "type": "module",
   "scripts": {
-    "build": "babel src -d dist",
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "clean": "rm -rf build",
+    "copy-static": "cp -r src/public build/ && cp -r src/utils build/ && cp -r src/data build/ 2>/dev/null || mkdir -p build/data",
+    "build-js": "babel src --out-dir build --copy-files --ignore 'src/public/**'",
+    "build": "npm run clean && npm run build-js && npm run copy-static",
+    "start": "node build/server.js",
+    "dev": "nodemon src/server.js",
+    "dev:build": "nodemon --exec \"npm run build && npm start\"",
+    "serve": "npm run build && npm start",
+    "watch": "nodemon --watch src --exec \"npm run build && npm start\""
   },
   "dependencies": {
     "axios": "^1.10.0",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "genankjs": "^1.0.6",
     "google-tts-api": "^2.0.2",
     "multer": "^2.0.2",
-    "nodemon": "^3.1.10",
     "papaparse": "^5.5.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/plugin-transform-runtime": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "concurrently": "^8.2.0",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.10"
   },
   "nodemonConfig": {
     "ignore": [
       "data/*",
-      "public/*"
+      "public/*",
+      "build/*"
     ]
   },
-  "devDependencies": {
-    "babel-cli": "^6.26.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

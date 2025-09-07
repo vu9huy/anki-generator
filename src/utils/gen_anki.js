@@ -1,10 +1,19 @@
 import { Package, Deck, Note, Model } from 'genankjs';
 import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
+import fs from "fs"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const genAnki = async () => {
     try {
         // Read JSON data with deck name
-        const jsonData = JSON.parse(readFileSync('data/data.json', 'utf8'));
+        const dataPath = path.join(__dirname, '..', 'data', 'data.json');
+        const jsonData = JSON.parse(readFileSync(dataPath, 'utf8'));
+        // const jsonData = JSON.parse(readFileSync('../data/data.json', 'utf8'));
         const deckName = jsonData.deckName || 'My Vocab Deck';
         const data = jsonData.cards || jsonData; // Support both new and old format
 
@@ -100,7 +109,12 @@ export const genAnki = async () => {
         console.log(`✓ Added ${mediaCount} media files successfully`);
 
         // Write to file
-        await pkg.writeToFile('public/output/output.apkg');
+        const outputDir = path.join(__dirname, '..', 'public', 'output');
+        if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+        }
+        const outputPath = path.join(outputDir, 'output.apkg');
+        await pkg.writeToFile(outputPath);
 
         console.log(`🎉 Generated public/output/output.apkg successfully!`);
         console.log(`📦 Deck Name: "${deckName}"`);
